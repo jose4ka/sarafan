@@ -1,3 +1,12 @@
+/*
+ *  Created by Dmitry Garmyshev on 02.08.2020, 10:45
+ *  Copyright (c) 2020 . All rights reserved.
+ *  Last modified 01.08.2020, 23:47
+ */
+
+/*
+Главный контроллер возвращающий пользователя и его сообщения
+ */
 package com.loakdv.sarafan.controller;
 
 import com.loakdv.sarafan.domain.User;

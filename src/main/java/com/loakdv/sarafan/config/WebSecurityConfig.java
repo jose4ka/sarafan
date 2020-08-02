@@ -1,3 +1,13 @@
+/*
+ *  Created by Dmitry Garmyshev on 02.08.2020, 10:45
+ *  Copyright (c) 2020 . All rights reserved.
+ *  Last modified 02.08.2020, 10:42
+ */
+
+/*
+Класс конфига для работы с аутентификацией
+ */
+
 package com.loakdv.sarafan.config;
 
 import com.loakdv.sarafan.domain.User;
@@ -16,22 +26,27 @@ import java.time.LocalDateTime;
 @EnableWebSecurity
 @EnableOAuth2Sso
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    //Сами настройки конфига
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .antMatcher("/**")
+                .antMatcher("/**")//Основная ветка, на которую распространяется конфиг
                 .authorizeRequests()
-                .antMatchers("/", "/login**","/js/**", "/error**").permitAll()
+                .antMatchers("/", "/login**","/js/**", "/error**").permitAll()//Окна которые могут выводиться юзерам
                 .anyRequest().authenticated()
-                .and().logout().logoutSuccessUrl("/").permitAll()
+                .and().logout().logoutSuccessUrl("/").permitAll()//В каких местах доступен выход из системы
                 .and()
                 .csrf().disable();
     }
 
+    //Данные о пользователе из Google
     @Bean
     public PrincipalExtractor principalExtractor(UserDetailsRepo userDetailsRepo){
         return map -> {
             String id = (String) map.get("sub");
+
+            //Если пользователя нет в базе, создаём нового и заполняем его данными из гугла
             User user = userDetailsRepo.findById(id).orElseGet(() ->{
                 User newUser = new User();
 
@@ -45,9 +60,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 return newUser;
             });
 
-            user.setLastVisit(LocalDateTime.now());
+            user.setLastVisit(LocalDateTime.now()); //Устанавливаем текущее время
 
-            return userDetailsRepo.save(user);
+            return userDetailsRepo.save(user);//Сохраняем пользователя в БД
         };
     }
 
